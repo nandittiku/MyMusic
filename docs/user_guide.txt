@@ -1,0 +1,29 @@
+User Guide
+==========
+:Author: Nandit Tiku
+:Release: |release|
+:Date: |today|
+
+About
+=====
+MyMusic is a free Open Source Decentralized P2P music streaming server.<br>
+You can share your music with anyone you like via the internet.<br>
+Just set up the server on your machine with your music and connect to your computer to listen to your songs.
+
+Setting-Up
+==========
+* Register your Application with facebook http://www.facebook.com/developers/apps.php
+  MyMusic relies on facebook for authentication.
+  Make sure that the information in the setup files are correct.
+  If you are in localhost, you are the admin. You can get your IP on your admin page at http://www.localhost:5000/admin/ (by default)
+
+* Once your application has been set up with facebook, you need to add
+  songs to your music library. Go to the admin page http://www.localhost:5000/admin/ (by default)
+  and add your music.
+  You can also get information and albumart from Lastfm.
+
+* Thats it! You are now ready to share your music with your friends.
+
+Help/Info/Contact
+=================
+nandittiku@gmail.com

@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+
+  <head>
+    <title>${self.title()}</title>
+    ${self.head()}
+  </head>
+
+  <body>
+    ${self.header()}
+    ${next.body()}
+    ${self.footer()}
+  </body>
+
+</html>
+<%!
+   from pylons import config
+   webname = config.get("website")
+   appid = config.get("facebook.appid")
+%>
+
+<%def name="title()">
+	${webname}
+</%def>
+
+<%def name="head()">
+  ${h.stylesheet_link(url('/css/style.css'))}
+  ${h.stylesheet_link(url('/css/jScrollPane.css'))}
+  <script type="text/javascript" src="http://mediaplayer.yahoo.com/js"></script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+  <script type="text/javascript" src="${url('/js/jScrollPane.js')}"></script>
+  <script type="text/javascript" src="${url('/js/jquery.em.js')}"></script>
+  <script type="text/javascript" src="${url('/js/jquery.mousewheel.js')}"></script>
+
+  <!-- Track seek -->
+  <script type="text/javascript" src="http://www.danceatthepostoffice.com/js/trackseek.js"></script>
+  <script type="text/javascript" src="http://www.danceatthepostoffice.com/js/trackresume.js"></script>
+  <script type="text/javascript" src="http://www.danceatthepostoffice.com/js/ef.ymp.utilities.js"></script>
+  <script type="text/javascript" src="http://www.danceatthepostoffice.com/js/trackfocus.js"></script>
+  <!-- /Track seek -->
+
+  <script>
+
+    $(function()
+    {
+      $('.scroll-pane').jScrollPane();
+    });
+  </script>
+</%def>
+
+<%def name="header()">
+<div class="header">
+  <div class="wrapper">
+    <h1>
+      <span><a href="/">${webname}</a></span>
+    </h1>
+
+    % if "/music/view" in request.url:
+       <div id="search">
+	 <input type="text" name="search" value="" id="searchinput" onkeyup="search()"/>
+	 <input type="submit" name="submit" value="search" onClick="search()" class="button" />
+	 <span id="searchdone"></span>
+	 <input type="submit" name="submit" value="All" onClick="viewall()"  class="button" />
+       </div>
+     % endif
+
+
+    <span id="controls">
+      <div id="fb-root" style="display:inline"></div>
+      <fb:login-button autologoutlink="true"></fb:login-button>
+      <script src="http://connect.facebook.net/en_US/all.js"></script>
+      <script>
+	FB.init({appId: '${appid}', status: true, cookie: true, xfbml: true});
+	FB.Event.subscribe('auth.sessionChange', function(response) {
+	if (response.session) {
+	// A user has logged in, and a new cookie has been saved
+	
+	} else {
+	// The user has logged out, and the cookie has been cleared
+	}
+	window.location.reload();
+	});
+      </script>
+      
+      ${h.link_to('Settings', url(controller='admin', action='index',))} &nbsp;
+
+    </span>
+  </div>
+</div>
+</%def>
+
+
+<%def name="footer()">
+<div class="footer">
+  <div class="wrapper footnote">
+    <ul>
+      <li>MyMusic - written and maintained by Nandit Tiku</li>
+      <li>Powered by Pylons</li>
+      <li>${h.link_to('About', url(controller='about', action='index',))}</li>
+    </ul>
+  </div>
+</div>
+</%def>

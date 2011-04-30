@@ -1,0 +1,22 @@
+<%inherit file="/base/index.html"/>
+
+<div class="content wrapper">
+  <div class="left">
+    <div class="music-list scroll-pane" id="music-list">
+      % for song in c.songs:
+      <a href="http://127.0.0.1:5000/music/listen/${song[0]}.mp3" title="${song[1]}" type="audio/mpeg">${song[1]}</a>
+      <br>
+      % endfor
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="player">
+      player
+    </div>
+    <div class="friends">
+      friends
+    </div>
+  </div>
+</div>
+

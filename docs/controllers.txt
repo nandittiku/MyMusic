@@ -1,0 +1,28 @@
+Controllers Documentation
+=========================
+Documentation for MyMusic OpenSource music sharing software.
+These are the controllers.
+
+The :mod:`admin` Module
+-------------------------
+
+.. automodule:: mymusic.controllers.admin
+	:members:
+
+The :mod:`friends` Module
+-------------------------
+
+.. automodule:: mymusic.controllers.friends
+	:members:
+
+The :mod:`search` Module
+-------------------------
+
+.. automodule:: mymusic.controllers.search
+	:members:
+
+The :mod:`music` Module
+-------------------------
+
+.. automodule:: mymusic.controllers.music
+	:members:

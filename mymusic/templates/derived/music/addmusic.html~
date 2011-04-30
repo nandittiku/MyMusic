@@ -1,0 +1,45 @@
+<%inherit file="/base/index.html"/>
+
+<script>
+function lastfm()
+{
+  $("#lastfmdone").html("<img src='/ajax-loader.gif' alt='Getting information. This may take a while.' />");
+    $.ajax({
+      type: "POST",
+      url: "/music/lastfm/",
+      data: "",
+      success: function(response){  $("#lastfmdone").html("<img src='/check.gif' alt='Done' />");}
+    });
+}
+
+function cleardb()
+{
+  $("#cleardbdone").html("<img src='/ajax-loader.gif' alt='Getting information. This may take a while.' />");
+    $.ajax({
+      type: "POST",
+      url: "/music/clearDB/",
+      data: "",
+      success: function(response){  $("#cleardbdone").html("<img src='/check.gif' alt='Done' />");}
+    });
+}
+</script>
+
+<div class="content wrapper">
+${c.message}
+  <form name="test" method="post" action="/music/addmusic/">
+    folder: <input type="text" name="folder" />
+    <input type="submit" name="submit" value="Submit" />
+  </form>
+
+<div>
+  Get LastFM Data:  <input id="lastfm" type="button" onclick="lastfm()" value="Get LastFM Info" />
+  <span id="lastfmdone"></span>
+</div>
+
+<div>
+  Remove all songs:  <input id="cleardb" type="button" onclick="cleardb()" value="Clear DB" />
+  <span id="cleardbdone"></span>
+</div>
+
+</div>
+

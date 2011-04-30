@@ -1,0 +1,201 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>mymusic.controllers.music &mdash; MyMusic v1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="MyMusic v1.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">MyMusic v1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for mymusic.controllers.music</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Controller for the Music Page and all that it may use.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">pylons</span> <span class="kn">import</span> <span class="n">request</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">tmpl_context</span> <span class="k">as</span> <span class="n">c</span><span class="p">,</span> <span class="n">url</span>
+<span class="kn">from</span> <span class="nn">pylons.controllers.util</span> <span class="kn">import</span> <span class="n">abort</span><span class="p">,</span> <span class="n">redirect</span>
+<span class="kn">from</span> <span class="nn">pylons</span> <span class="kn">import</span> <span class="n">config</span>
+<span class="kn">from</span> <span class="nn">mymusic.lib.base</span> <span class="kn">import</span> <span class="n">BaseController</span><span class="p">,</span> <span class="n">render</span>
+<span class="kn">import</span> <span class="nn">mymusic.lib.music</span> <span class="kn">as</span> <span class="nn">musicDB</span>
+<span class="kn">from</span> <span class="nn">mymusic.lib.lastfm</span> <span class="kn">import</span> <span class="n">LastFM</span>
+<span class="kn">from</span> <span class="nn">mymusic.lib.auth</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">mymusic.lib.friends</span> <span class="kn">import</span> <span class="n">FriendsList</span>
+<span class="kn">from</span> <span class="nn">paste.request</span> <span class="kn">import</span> <span class="n">construct_url</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MusicController"><a class="viewcode-back" href="../../../controllers.html#mymusic.controllers.music.MusicController">[docs]</a><span class="k">class</span> <span class="nc">MusicController</span><span class="p">(</span><span class="n">BaseController</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate the page for viewing, listening an adding music</span>
+<span class="sd">    to the library.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@authorize</span><span class="p">(</span><span class="n">IsLogged</span><span class="p">(),</span><span class="n">handler</span><span class="p">)</span>
+<div class="viewcode-block" id="MusicController.index"><a class="viewcode-back" href="../../../controllers.html#mymusic.controllers.music.MusicController.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Home page (view music library)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url</span><span class="p">(</span><span class="n">controller</span><span class="o">=</span><span class="s">&quot;music&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;view&quot;</span><span class="p">))</span>
+</div>
+    <span class="nd">@authorize</span><span class="p">(</span><span class="n">IsLogged</span><span class="p">(),</span><span class="n">handler</span><span class="p">)</span>
+<div class="viewcode-block" id="MusicController.view"><a class="viewcode-back" href="../../../controllers.html#mymusic.controllers.music.MusicController.view">[docs]</a>    <span class="k">def</span> <span class="nf">view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        View music library page</span>
+<span class="sd">        @return rendered page</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#39;Music Collection&#39;</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">songs</span> <span class="o">=</span> <span class="n">musicDB</span><span class="o">.</span><span class="n">findall</span><span class="p">()</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">uid</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;facebook.uid&quot;</span><span class="p">)</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">construct_url</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">with_query_string</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">with_path_info</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="s">&#39;/derived/music/view.html&#39;</span><span class="p">)</span>
+</div>
+    <span class="nd">@authorize</span><span class="p">(</span><span class="n">IsLogged</span><span class="p">(),</span><span class="n">handler</span><span class="p">)</span>
+<div class="viewcode-block" id="MusicController.songinfo"><a class="viewcode-back" href="../../../controllers.html#mymusic.controllers.music.MusicController.songinfo">[docs]</a>    <span class="k">def</span> <span class="nf">songinfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">songID</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        View lastfm info about a song</span>
+<span class="sd">        @param songID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">song</span> <span class="o">=</span> <span class="n">musicDB</span><span class="o">.</span><span class="n">findsong</span><span class="p">(</span><span class="n">songID</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="s">&quot;/derived/music/lastfm.html&quot;</span><span class="p">)</span>
+</div>
+    <span class="nd">@authorize</span><span class="p">(</span><span class="n">IsAdmin</span><span class="p">(),</span><span class="n">adminhandler</span><span class="p">)</span>
+<div class="viewcode-block" id="MusicController.addmusic"><a class="viewcode-back" href="../../../controllers.html#mymusic.controllers.music.MusicController.addmusic">[docs]</a>    <span class="k">def</span> <span class="nf">addmusic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add music to the library. Provide path to folder</span>
+<span class="sd">        containing music and all music is added to the library.</span>
+<span class="sd">        @return rendered page</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">folder</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;folder&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">folder</span><span class="p">:</span>
+<span class="c"># uncomment to clear DB everything a new folder is added.            </span>
+<span class="c">#            musicDB.clear()</span>
+            <span class="n">folder</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;folder&#39;</span><span class="p">]</span>
+            <span class="n">musicDB</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Music added&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Add music&quot;</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="s">&#39;/derived/music/addmusic.html&#39;</span><span class="p">)</span>
+
+</div>
+    <span class="nd">@authorize</span><span class="p">(</span><span class="n">IsAdmin</span><span class="p">(),</span><span class="n">handler</span><span class="p">)</span>
+<div class="viewcode-block" id="MusicController.lastfm"><a class="viewcode-back" href="../../../controllers.html#mymusic.controllers.music.MusicController.lastfm">[docs]</a>    <span class="k">def</span> <span class="nf">lastfm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get lastfm information</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lastfm</span> <span class="o">=</span> <span class="n">LastFM</span><span class="p">()</span>
+        <span class="n">lastfm</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">return</span>
+
+<span class="c">#    @authorize(IsLogged(),handler)</span></div>
+<div class="viewcode-block" id="MusicController.listen"><a class="viewcode-back" href="../../../controllers.html#mymusic.controllers.music.MusicController.listen">[docs]</a>    <span class="k">def</span> <span class="nf">listen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">songID</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a stream for the music that is requested.</span>
+<span class="sd">        Since the songs are outsite the webservers control area</span>
+<span class="sd">        we need to load the music into a stream and return the</span>
+<span class="sd">        stream.</span>
+<span class="sd">        @param songID - ID of the song to stream.</span>
+<span class="sd">        @return content - The music stream.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">songID</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&#39;\.mp3$&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">songID</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">musicDB</span><span class="o">.</span><span class="n">findsong</span><span class="p">(</span><span class="n">songID</span><span class="p">)</span><span class="o">.</span><span class="n">path</span>
+        <span class="n">stream</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">stream</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">content_type</span> <span class="o">=</span> <span class="s">&quot;audio/mpeg&quot;</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">content_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">content</span>
+</div>
+    <span class="nd">@authorize</span><span class="p">(</span><span class="n">IsAdmin</span><span class="p">(),</span> <span class="n">adminhandler</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">clearDB</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">musicDB</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">return</span> <span class="s">&quot;True&quot;</span>
+
+    <span class="nd">@authorize</span><span class="p">(</span><span class="n">IsAdmin</span><span class="p">(),</span> <span class="n">adminhandler</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">removesong</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">songID</span><span class="p">):</span>
+        <span class="n">musicDB</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">songID</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s">&quot;True&quot;</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">MyMusic v1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Nandit Tiku.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
+    </div>
+  </body>
+</html>

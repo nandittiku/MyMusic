@@ -1,0 +1,23 @@
+Dev Guide
+=========
+:Author: Nandit Tiku
+:Release: |release|
+:Date: |today|
+
+About
+=====
+MyMusic is a free Open Source Decentralized P2P music streaming server.
+You can share your music with anyone you like via the internet. 
+Just set up the server on your machine with your music and connect to your computer to listen to your songs.
+
+For the Devs
+============
+MyMusic uses a python WebFramework called Pylons (http://pylonshq.com/).
+Any suggestions or contributions are more than welcome.
+Feel free to play around with it or create your own. Send me a link of your application. I would love to check
+it out.
+
+
+Help/Info/Contact
+=================
+nandittiku@gmail.com

@@ -1,0 +1,11 @@
+<%inherit file="/base/index.html"/>
+
+<div class="content wrapper">
+  <p>
+    <h2 style="display:inline; margin-right:20px">Connection host IP: ${c.host}</h2><h7 style="display:inline">(You and your friends connect to this url.)</h7>
+  </p>
+  <p>
+    ${h.link_to('Add Music', url(controller='music', action='addmusic',))}
+  </p>
+</div>
+

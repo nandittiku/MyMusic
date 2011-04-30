@@ -1,0 +1,28 @@
+import music as model
+from sqlalchemy import orm
+from sqlalchemy import create_engine
+from sqlalchemy.sql import select, delete
+# Create an engine and create all the tables we need
+engine = create_engine('sqlite:///dev.db')
+model.metadata.bind = engine
+model.metadata.create_all()
+# Set up the session
+sm = orm.sessionmaker(bind=engine, autoflush=True, autocommit=False,
+                      expire_on_commit=True)
+session = orm.scoped_session(sm)
+
+# to add
+music = model.Music()
+music.songname = "yomana"
+music.path = "outside.mp3"
+# session.add(music)
+# session.commit()
+
+# to select
+page = session.query(model.Music)
+for p in page:
+    print p.songname
+
+# to remove
+session.query(model.Music).delete()
+session.commit()

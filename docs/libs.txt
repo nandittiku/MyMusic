@@ -1,0 +1,29 @@
+Library Documentation
+=====================
+Documentation for MyMusic OpenSource music sharing software.
+These are the library/helper functions.
+
+The :mod:`music` Module
+-------------------------
+.. automodule:: mymusic.lib.music
+	:members:
+
+The :mod:`auth` Module
+-------------------------
+.. automodule:: mymusic.lib.auth
+	:members:
+
+The :mod:`facebook` Module
+--------------------------
+.. automodule:: mymusic.lib.facebook
+	:members:
+
+The :mod:`friends` Module
+-------------------------
+.. automodule:: mymusic.lib.friends
+	:members:
+
+The :mod:`lastfm` Module
+-------------------------
+.. automodule:: mymusic.lib.lastfm
+	:members:

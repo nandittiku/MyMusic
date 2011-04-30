@@ -1,0 +1,9 @@
+  <img src="${c.song.albumart}" class="albumart" alt="" />
+  <span class="songname">
+    ${c.song.artist} - ${c.song.title}
+  </span>
+  <div class="info scroll-pane">
+    <%
+       context.write(c.song.content)
+    %>
+  </div>

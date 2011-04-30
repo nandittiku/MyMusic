@@ -1,0 +1,14 @@
+% if c.song.albumart.isspace():
+<img src="/albumart.jpg" alt="" class="albumart"/>
+% else:
+<img src="${c.song.albumart}" alt="" class="albumart"/>
+% endif
+
+<span class="songname">
+  ${c.song.artist} - ${c.song.title}
+</span>
+<div class="info scroll-pane">
+  <%
+     context.write(c.song.content)
+     %>
+</div>

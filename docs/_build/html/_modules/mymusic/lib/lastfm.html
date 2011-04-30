@@ -1,0 +1,165 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>mymusic.lib.lastfm &mdash; MyMusic v1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="MyMusic v1.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">MyMusic v1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for mymusic.lib.lastfm</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">BeautifulSoup</span> <span class="kn">import</span> <span class="n">BeautifulStoneSoup</span>
+<span class="kn">import</span> <span class="nn">mymusic.lib.music</span> <span class="kn">as</span> <span class="nn">musicDB</span>
+<span class="kn">import</span> <span class="nn">urllib</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<div class="viewcode-block" id="LastFM"><a class="viewcode-back" href="../../../libs.html#mymusic.lib.lastfm.LastFM">[docs]</a><span class="k">class</span> <span class="nc">LastFM</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simple LastFM API class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        initialize object if urls and API key</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">API_KEY</span> <span class="o">=</span> <span class="s">&quot;d5a0be581e595ee63373a21d17177673&quot;</span> <span class="c"># this is a sample key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trackurl</span> <span class="o">=</span> <span class="s">&quot;http://ws.audioscrobbler.com/2.0/?method=track.search&amp;api_key=&quot;</span><span class="o">+</span><span class="n">API_KEY</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wikiurl</span> <span class="o">=</span> <span class="s">&quot;http://ws.audioscrobbler.com/2.0/?method=track.getinfo&amp;api_key=&quot;</span><span class="o">+</span><span class="n">API_KEY</span>
+        
+
+<div class="viewcode-block" id="LastFM.gettrackinfo"><a class="viewcode-back" href="../../../libs.html#mymusic.lib.lastfm.LastFM.gettrackinfo">[docs]</a>    <span class="k">def</span> <span class="nf">gettrackinfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">track</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">artist</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        getinfo - Get info from Lastfm about a particular song</span>
+<span class="sd">        @param track - Track name and other information we may have</span>
+<span class="sd">        @return song - Return the song information on success</span>
+<span class="sd">                       else return None on failure</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">track</span> <span class="o">=</span> <span class="n">track</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&amp;&quot;</span><span class="p">,</span> <span class="s">&quot;and&quot;</span><span class="p">)</span>
+        <span class="n">artist</span> <span class="o">=</span> <span class="n">artist</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&amp;&quot;</span><span class="p">,</span> <span class="s">&quot;and&quot;</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trackurl</span><span class="o">+</span><span class="s">&quot;&amp;track=&quot;</span><span class="o">+</span><span class="n">track</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;ascii&#39;</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;&amp;artist=&quot;</span><span class="o">+</span><span class="n">artist</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;ascii&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">file</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+            <span class="n">page</span> <span class="o">=</span> <span class="n">BeautifulStoneSoup</span><span class="p">(</span><span class="nb">file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+            <span class="nb">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            
+            <span class="n">info</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;track&quot;</span><span class="p">)</span>
+            <span class="n">song</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">song</span><span class="p">[</span><span class="s">&quot;track&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">next</span>
+            <span class="n">song</span><span class="p">[</span><span class="s">&quot;artist&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;artist&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">next</span>
+            <span class="n">song</span><span class="p">[</span><span class="s">&quot;albumart&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">findAll</span><span class="p">(</span><span class="s">&quot;image&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">next</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">print</span> <span class="n">e</span>
+            <span class="k">return</span> <span class="bp">None</span>
+
+        <span class="k">return</span> <span class="n">song</span>
+</div>
+    <span class="k">def</span> <span class="nf">getwiki</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">artist</span><span class="p">,</span> <span class="n">track</span><span class="p">):</span>
+        <span class="c"># now you can use that object every where</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wikiurl</span><span class="o">+</span><span class="s">&quot;&amp;track=&quot;</span><span class="o">+</span><span class="n">track</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;ascii&#39;</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;&amp;artist=&quot;</span><span class="o">+</span><span class="n">artist</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;ascii&#39;</span><span class="p">)</span>
+        <span class="n">song</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">file</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+            <span class="n">page</span> <span class="o">=</span> <span class="n">BeautifulStoneSoup</span><span class="p">(</span><span class="nb">file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+            <span class="nb">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">song</span><span class="p">[</span><span class="s">&quot;summary&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;wiki&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">next</span>
+            <span class="n">song</span><span class="p">[</span><span class="s">&quot;content&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;wiki&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">next</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+         
+        <span class="k">return</span> <span class="n">song</span>
+         
+
+<div class="viewcode-block" id="LastFM.all"><a class="viewcode-back" href="../../../libs.html#mymusic.lib.lastfm.LastFM.all">[docs]</a>    <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        all - Get info from LastFM of all songs in the DB</span>
+<span class="sd">              and store the new info in the DB</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">songs</span> <span class="o">=</span> <span class="n">musicDB</span><span class="o">.</span><span class="n">findall</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">songs</span><span class="p">:</span>
+            <span class="n">updatedata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gettrackinfo</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">artist</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">updatedata</span><span class="p">:</span>
+                <span class="n">musicDB</span><span class="o">.</span><span class="n">update</span><span class="p">(</span> <span class="n">s</span><span class="p">,</span> <span class="n">updatedata</span> <span class="p">)</span>
+            <span class="n">wikidata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getwiki</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">artist</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">wikidata</span><span class="p">:</span>
+                <span class="n">musicDB</span><span class="o">.</span><span class="n">update</span><span class="p">(</span> <span class="n">s</span><span class="p">,</span> <span class="n">wikidata</span> <span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">MyMusic v1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Nandit Tiku.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,517 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Library Documentation &mdash; MyMusic v1.0 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="MyMusic v1.0 documentation" href="index.html" />
+    <link rel="next" title="User Guide" href="user_guide.html" />
+    <link rel="prev" title="Controllers Documentation" href="controllers.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="user_guide.html" title="User Guide"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="controllers.html" title="Controllers Documentation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">MyMusic v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="library-documentation">
+<h1>Library Documentation<a class="headerlink" href="#library-documentation" title="Permalink to this headline">¶</a></h1>
+<p>Documentation for MyMusic OpenSource music sharing software.
+These are the library/helper functions.</p>
+<div class="section" id="module-mymusic.lib.music">
+<span id="the-music-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">music</span></tt> Module<a class="headerlink" href="#module-mymusic.lib.music" title="Permalink to this headline">¶</a></h2>
+<p>Used mainly by the Music Controller to access the Music DB,
+get and store information about the  music.</p>
+<dl class="class">
+<dt id="mymusic.lib.music.FileInfo">
+<em class="property">class </em><tt class="descclassname">mymusic.lib.music.</tt><tt class="descname">FileInfo</tt><big>(</big><em>filename=None</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/music.html#FileInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.music.FileInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Source: <a class="reference external" href="http://diveintopython.org/object_oriented_framework/index.html">http://diveintopython.org/object_oriented_framework/index.html</a>
+store file metadata
+&#64;param UserDict - To store info in</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="mymusic.lib.music.MP3FileInfo">
+<em class="property">class </em><tt class="descclassname">mymusic.lib.music.</tt><tt class="descname">MP3FileInfo</tt><big>(</big><em>filename=None</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/music.html#MP3FileInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.music.MP3FileInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Source: <a class="reference external" href="http://diveintopython.org/object_oriented_framework/index.html">http://diveintopython.org/object_oriented_framework/index.html</a>
+store ID3v1.0 MP3 tags
+&#64;param FileInfo</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymusic.lib.music.add">
+<tt class="descclassname">mymusic.lib.music.</tt><tt class="descname">add</tt><big>(</big><em>folder</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/music.html#add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.music.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>The API function call to be used to add music to the
+library and DB given the path to the folder.
+&#64;param folder - Folder contaiing the music on the webserver machine.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymusic.lib.music.addsong">
+<tt class="descclassname">mymusic.lib.music.</tt><tt class="descname">addsong</tt><big>(</big><em>song</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/music.html#addsong"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.music.addsong" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a song to the database
+&#64;param song - The song to add to the database</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymusic.lib.music.clear">
+<tt class="descclassname">mymusic.lib.music.</tt><tt class="descname">clear</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mymusic/lib/music.html#clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.music.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around the SQL call to clear the DB entry for
+music so the library can be clean for new input or a fresh start.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymusic.lib.music.findall">
+<tt class="descclassname">mymusic.lib.music.</tt><tt class="descname">findall</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mymusic/lib/music.html#findall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.music.findall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around the SQL calls to find all the music
+in the library.
+&#64;return songs - List of songs and all their corresponding information</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymusic.lib.music.findsong">
+<tt class="descclassname">mymusic.lib.music.</tt><tt class="descname">findsong</tt><big>(</big><em>songID</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/music.html#findsong"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.music.findsong" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around the SQL calls to find a particular song
+by ID present in the library.
+&#64;param songID - ID of the song to search for
+&#64;return song - associative array with information about the song
+returns None on failure</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymusic.lib.music.findsongs">
+<tt class="descclassname">mymusic.lib.music.</tt><tt class="descname">findsongs</tt><big>(</big><em>folder</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/music.html#findsongs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.music.findsongs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a folder, find all songs recursively and return a list of songs with ID3tag info.
+This is used to add music to the library
+&#64;param folder - Folder containing music
+&#64;return songs - list of songs and ID3 tag info in directory</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymusic.lib.music.findstringwhere">
+<tt class="descclassname">mymusic.lib.music.</tt><tt class="descname">findstringwhere</tt><big>(</big><em>query</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/music.html#findstringwhere"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.music.findstringwhere" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for songs which match the query.
+&#64;param query - The song to search for
+&#64;return songs - List of songs that match the query</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymusic.lib.music.findwhere">
+<tt class="descclassname">mymusic.lib.music.</tt><tt class="descname">findwhere</tt><big>(</big><em>query</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/music.html#findwhere"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.music.findwhere" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for songs which match the query.
+&#64;param query - The song to search for
+&#64;return songs - List of songs that match the query</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymusic.lib.music.listDirectory">
+<tt class="descclassname">mymusic.lib.music.</tt><tt class="descname">listDirectory</tt><big>(</big><em>directory</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/music.html#listDirectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.music.listDirectory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a folder, find all songs recursively and return a list of songs with ID3tag info.
+This is used to add music to the library
+&#64;param folder - Folder containing music
+&#64;return songs - list of songs and ID3 tag info in directory</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymusic.lib.music.remove">
+<tt class="descclassname">mymusic.lib.music.</tt><tt class="descname">remove</tt><big>(</big><em>songID</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/music.html#remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.music.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around the SQL call to remove a song entry</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymusic.lib.music.stripnulls">
+<tt class="descclassname">mymusic.lib.music.</tt><tt class="descname">stripnulls</tt><big>(</big><em>data</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/music.html#stripnulls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.music.stripnulls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Source: <a class="reference external" href="http://diveintopython.org/object_oriented_framework/index.html">http://diveintopython.org/object_oriented_framework/index.html</a>
+strip whitespace and nulls
+&#64;param data - data to strip nulls from
+&#64;return data after remove nulls</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-mymusic.lib.auth">
+<span id="the-auth-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">auth</span></tt> Module<a class="headerlink" href="#module-mymusic.lib.auth" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="mymusic.lib.auth.IsAdmin">
+<em class="property">class </em><tt class="descclassname">mymusic.lib.auth.</tt><tt class="descname">IsAdmin</tt><big>(</big><em>*args</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/auth.html#IsAdmin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.auth.IsAdmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks to see if the user is logged in and then to see if
+the facebook id data matches the data in the
+setup files for the admin user.</p>
+<dl class="method">
+<dt id="mymusic.lib.auth.IsAdmin.check">
+<tt class="descname">check</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mymusic/lib/auth.html#IsAdmin.check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.auth.IsAdmin.check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the user is authorized to view page. Needs to be admin</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mymusic.lib.auth.IsLogged">
+<em class="property">class </em><tt class="descclassname">mymusic.lib.auth.</tt><tt class="descname">IsLogged</tt><big>(</big><em>*args</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/auth.html#IsLogged"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.auth.IsLogged" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the user is logged in</p>
+<dl class="method">
+<dt id="mymusic.lib.auth.IsLogged.check">
+<tt class="descname">check</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mymusic/lib/auth.html#IsLogged.check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.auth.IsLogged.check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the user is authorized to view page</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="mymusic.lib.auth.adminhandler">
+<tt class="descclassname">mymusic.lib.auth.</tt><tt class="descname">adminhandler</tt><big>(</big><em>message</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/auth.html#adminhandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.auth.adminhandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler if the user is not admin.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymusic.lib.auth.authorize">
+<tt class="descclassname">mymusic.lib.auth.</tt><tt class="descname">authorize</tt><big>(</big><em>valid</em>, <em>handler</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/auth.html#authorize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.auth.authorize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the user is authorized to view page</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymusic.lib.auth.handler">
+<tt class="descclassname">mymusic.lib.auth.</tt><tt class="descname">handler</tt><big>(</big><em>message</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/auth.html#handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.auth.handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler if the user is not logged in.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymusic.lib.auth.isadmin">
+<tt class="descclassname">mymusic.lib.auth.</tt><tt class="descname">isadmin</tt><big>(</big><big>)</big><a class="headerlink" href="#mymusic.lib.auth.isadmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks to see if the user is the admin.
+If the user is on localhost or is authed by facebook
+as the owner of the app, then the user is admin
+&#64;return True if the user is the admin
+&#64;return False if the user is not the admin</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymusic.lib.auth.islocalhost">
+<tt class="descclassname">mymusic.lib.auth.</tt><tt class="descname">islocalhost</tt><big>(</big><big>)</big><a class="headerlink" href="#mymusic.lib.auth.islocalhost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks to see if the user is accessing the page locally.
+&#64;return True if user is on localhost
+&#64;return False if user is not on localhost</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-mymusic.lib.facebook">
+<span id="the-facebook-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">facebook</span></tt> Module<a class="headerlink" href="#module-mymusic.lib.facebook" title="Permalink to this headline">¶</a></h2>
+<p>Python client library for the Facebook Platform.</p>
+<p>This client library is designed to support the Graph API and the official
+Facebook JavaScript SDK, which is the canonical way to implement
+Facebook authentication. Read more about the Graph API at
+<a class="reference external" href="http://developers.facebook.com/docs/api">http://developers.facebook.com/docs/api</a>. You can download the Facebook
+JavaScript SDK at <a class="reference external" href="http://github.com/facebook/connect-js/">http://github.com/facebook/connect-js/</a>.</p>
+<p>If your application is using Google AppEngine&#8217;s webapp framework, your
+usage of this module might look like this:</p>
+<blockquote>
+<p>user = facebook.get_user_from_cookie(self.request.cookies, key, secret)
+if user:</p>
+<blockquote>
+graph = facebook.GraphAPI(user[&#8220;access_token&#8221;])
+profile = graph.get_object(&#8220;me&#8221;)
+friends = graph.get_connections(&#8220;me&#8221;, &#8220;friends&#8221;)</blockquote>
+</blockquote>
+<dl class="class">
+<dt id="mymusic.lib.facebook.GraphAPI">
+<em class="property">class </em><tt class="descclassname">mymusic.lib.facebook.</tt><tt class="descname">GraphAPI</tt><big>(</big><em>access_token=None</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/facebook.html#GraphAPI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.facebook.GraphAPI" title="Permalink to this definition">¶</a></dt>
+<dd><p>A client for the Facebook Graph API.</p>
+<p>See <a class="reference external" href="http://developers.facebook.com/docs/api">http://developers.facebook.com/docs/api</a> for complete documentation
+for the API.</p>
+<p>The Graph API is made up of the objects in Facebook (e.g., people, pages,
+events, photos) and the connections between them (e.g., friends,
+photo tags, and event RSVPs). This client provides access to those
+primitive types in a generic way. For example, given an OAuth access
+token, this will fetch the profile of the active user and the list
+of the user&#8217;s friends:</p>
+<blockquote>
+graph = facebook.GraphAPI(access_token)
+user = graph.get_object(&#8220;me&#8221;)
+friends = graph.get_connections(user[&#8220;id&#8221;], &#8220;friends&#8221;)</blockquote>
+<p>You can see a list of all of the objects and connections supported
+by the API at <a class="reference external" href="http://developers.facebook.com/docs/reference/api/">http://developers.facebook.com/docs/reference/api/</a>.</p>
+<p>You can obtain an access token via OAuth or by using the Facebook
+JavaScript SDK. See <a class="reference external" href="http://developers.facebook.com/docs/authentication/">http://developers.facebook.com/docs/authentication/</a>
+for details.</p>
+<p>If you are using the JavaScript SDK, you can use the
+get_user_from_cookie() method below to get the OAuth access token
+for the active user from the cookie saved by the SDK.</p>
+<dl class="method">
+<dt id="mymusic.lib.facebook.GraphAPI.arefriends">
+<tt class="descname">arefriends</tt><big>(</big><em>uid1</em>, <em>uid2</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/facebook.html#GraphAPI.arefriends"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.facebook.GraphAPI.arefriends" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if two people are facebook friends.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mymusic.lib.facebook.GraphAPI.delete_object">
+<tt class="descname">delete_object</tt><big>(</big><em>id</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/facebook.html#GraphAPI.delete_object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.facebook.GraphAPI.delete_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes the object with the given ID from the graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mymusic.lib.facebook.GraphAPI.get_connections">
+<tt class="descname">get_connections</tt><big>(</big><em>id</em>, <em>connection_name</em>, <em>**args</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/facebook.html#GraphAPI.get_connections"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.facebook.GraphAPI.get_connections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetchs the connections for given object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mymusic.lib.facebook.GraphAPI.get_object">
+<tt class="descname">get_object</tt><big>(</big><em>id</em>, <em>**args</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/facebook.html#GraphAPI.get_object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.facebook.GraphAPI.get_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetchs the given object from the graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mymusic.lib.facebook.GraphAPI.get_objects">
+<tt class="descname">get_objects</tt><big>(</big><em>ids</em>, <em>**args</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/facebook.html#GraphAPI.get_objects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.facebook.GraphAPI.get_objects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetchs all of the given object from the graph.</p>
+<p>We return a map from ID to object. If any of the IDs are invalid,
+we raise an exception.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mymusic.lib.facebook.GraphAPI.put_comment">
+<tt class="descname">put_comment</tt><big>(</big><em>object_id</em>, <em>message</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/facebook.html#GraphAPI.put_comment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.facebook.GraphAPI.put_comment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the given comment on the given post.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mymusic.lib.facebook.GraphAPI.put_like">
+<tt class="descname">put_like</tt><big>(</big><em>object_id</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/facebook.html#GraphAPI.put_like"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.facebook.GraphAPI.put_like" title="Permalink to this definition">¶</a></dt>
+<dd><p>Likes the given post.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mymusic.lib.facebook.GraphAPI.put_object">
+<tt class="descname">put_object</tt><big>(</big><em>parent_object</em>, <em>connection_name</em>, <em>**data</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/facebook.html#GraphAPI.put_object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.facebook.GraphAPI.put_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the given object to the graph, connected to the given parent.</p>
+<p>For example,</p>
+<blockquote>
+graph.put_object(&#8220;me&#8221;, &#8220;feed&#8221;, message=&#8221;Hello, world&#8221;)</blockquote>
+<p>writes &#8220;Hello, world&#8221; to the active user&#8217;s wall. Likewise, this
+will comment on a the first post of the active user&#8217;s feed:</p>
+<blockquote>
+feed = graph.get_connections(&#8220;me&#8221;, &#8220;feed&#8221;)
+post = feed[&#8220;data&#8221;][0]
+graph.put_object(post[&#8220;id&#8221;], &#8220;comments&#8221;, message=&#8221;First!&#8221;)</blockquote>
+<p>See <a class="reference external" href="http://developers.facebook.com/docs/api#publishing">http://developers.facebook.com/docs/api#publishing</a> for all of
+the supported writeable objects.</p>
+<p>Most write operations require extended permissions. For example,
+publishing wall posts requires the &#8220;publish_stream&#8221; permission. See
+<a class="reference external" href="http://developers.facebook.com/docs/authentication/">http://developers.facebook.com/docs/authentication/</a> for details about
+extended permissions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mymusic.lib.facebook.GraphAPI.put_wall_post">
+<tt class="descname">put_wall_post</tt><big>(</big><em>message</em>, <em>attachment={}</em>, <em>profile_id='me'</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/facebook.html#GraphAPI.put_wall_post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.facebook.GraphAPI.put_wall_post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a wall post to the given profile&#8217;s wall.</p>
+<p>We default to writing to the authenticated user&#8217;s wall if no
+profile_id is specified.</p>
+<p>attachment adds a structured attachment to the status message being
+posted to the Wall. It should be a dictionary of the form:</p>
+<blockquote>
+<dl class="docutils">
+<dt>{&#8220;name&#8221;: &#8220;Link name&#8221;</dt>
+<dd>&#8220;link&#8221;: &#8220;<a class="reference external" href="http://www.example.com/">http://www.example.com/</a>&#8221;,
+&#8220;caption&#8221;: &#8220;{<em>actor</em>} posted a new review&#8221;,
+&#8220;description&#8221;: &#8220;This is a longer description of the attachment&#8221;,
+&#8220;picture&#8221;: &#8220;<a class="reference external" href="http://www.example.com/thumbnail.jpg">http://www.example.com/thumbnail.jpg</a>&#8220;}</dd>
+</dl>
+</blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="mymusic.lib.facebook.GraphAPI.request">
+<tt class="descname">request</tt><big>(</big><em>path</em>, <em>args=None</em>, <em>post_args=None</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/facebook.html#GraphAPI.request"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.facebook.GraphAPI.request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetches the given path in the Graph API.</p>
+<p>We translate args to a valid query string. If post_args is given,
+we send a POST request to the given path with the given arguments.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="mymusic.lib.facebook.get_user_from_cookie">
+<tt class="descclassname">mymusic.lib.facebook.</tt><tt class="descname">get_user_from_cookie</tt><big>(</big><em>cookies</em>, <em>app_id</em>, <em>app_secret</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/facebook.html#get_user_from_cookie"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.facebook.get_user_from_cookie" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the cookie set by the official Facebook JavaScript SDK.</p>
+<p>cookies should be a dictionary-like object mapping cookie names to
+cookie values.</p>
+<p>If the user is logged in via Facebook, we return a dictionary with the
+keys &#8220;uid&#8221; and &#8220;access_token&#8221;. The former is the user&#8217;s Facebook ID,
+and the latter can be used to make authenticated requests to the Graph API.
+If the user is not logged in, we return None.</p>
+<p>Download the official Facebook JavaScript SDK at
+<a class="reference external" href="http://github.com/facebook/connect-js/">http://github.com/facebook/connect-js/</a>. Read more about Facebook
+authentication at <a class="reference external" href="http://developers.facebook.com/docs/authentication/">http://developers.facebook.com/docs/authentication/</a>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mymusic.lib.facebook.is_connected">
+<tt class="descclassname">mymusic.lib.facebook.</tt><tt class="descname">is_connected</tt><big>(</big><em>cookies</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/facebook.html#is_connected"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.facebook.is_connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks to see if a user is logged into facebook connect. Else return None.
+&#64;param cookies - The cookies to check to see if the user is authenticated.
+&#64;return access_token on success
+&#64;return None on failure</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-mymusic.lib.friends">
+<span id="the-friends-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">friends</span></tt> Module<a class="headerlink" href="#module-mymusic.lib.friends" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="mymusic.lib.friends.FriendsList">
+<em class="property">class </em><tt class="descclassname">mymusic.lib.friends.</tt><tt class="descname">FriendsList</tt><a class="reference internal" href="_modules/mymusic/lib/friends.html#FriendsList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.friends.FriendsList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to handle Facebook Graph API for friends list</p>
+<dl class="method">
+<dt id="mymusic.lib.friends.FriendsList.are_friends">
+<tt class="descname">are_friends</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mymusic/lib/friends.html#FriendsList.are_friends"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.friends.FriendsList.are_friends" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the logged in user and the admin of the webserver
+are friends
+&#64;return bool True/False</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mymusic.lib.friends.FriendsList.get_list">
+<tt class="descname">get_list</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mymusic/lib/friends.html#FriendsList.get_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.friends.FriendsList.get_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of friends for the logged in user.
+&#64;return list of dictionaries containing all the friends</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-mymusic.lib.lastfm">
+<span id="the-lastfm-module"></span><h2>The <tt class="xref py py-mod docutils literal"><span class="pre">lastfm</span></tt> Module<a class="headerlink" href="#module-mymusic.lib.lastfm" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="mymusic.lib.lastfm.LastFM">
+<em class="property">class </em><tt class="descclassname">mymusic.lib.lastfm.</tt><tt class="descname">LastFM</tt><a class="reference internal" href="_modules/mymusic/lib/lastfm.html#LastFM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.lastfm.LastFM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple LastFM API class</p>
+<dl class="method">
+<dt id="mymusic.lib.lastfm.LastFM.all">
+<tt class="descname">all</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/mymusic/lib/lastfm.html#LastFM.all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.lastfm.LastFM.all" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>all - Get info from LastFM of all songs in the DB</dt>
+<dd>and store the new info in the DB</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="mymusic.lib.lastfm.LastFM.gettrackinfo">
+<tt class="descname">gettrackinfo</tt><big>(</big><em>track=''</em>, <em>artist=''</em><big>)</big><a class="reference internal" href="_modules/mymusic/lib/lastfm.html#LastFM.gettrackinfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mymusic.lib.lastfm.LastFM.gettrackinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>getinfo - Get info from Lastfm about a particular song
+&#64;param track - Track name and other information we may have
+&#64;return song - Return the song information on success</p>
+<blockquote>
+else return None on failure</blockquote>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Library Documentation</a><ul>
+<li><a class="reference internal" href="#module-mymusic.lib.music">The <tt class="docutils literal"><span class="pre">music</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-mymusic.lib.auth">The <tt class="docutils literal"><span class="pre">auth</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-mymusic.lib.facebook">The <tt class="docutils literal"><span class="pre">facebook</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-mymusic.lib.friends">The <tt class="docutils literal"><span class="pre">friends</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-mymusic.lib.lastfm">The <tt class="docutils literal"><span class="pre">lastfm</span></tt> Module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="controllers.html"
+                        title="previous chapter">Controllers Documentation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="user_guide.html"
+                        title="next chapter">User Guide</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/libs.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="user_guide.html" title="User Guide"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="controllers.html" title="Controllers Documentation"
+             >previous</a> |</li>
+        <li><a href="index.html">MyMusic v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Nandit Tiku.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
+    </div>
+  </body>
+</html>

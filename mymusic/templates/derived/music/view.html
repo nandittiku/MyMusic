@@ -1,0 +1,154 @@
+<%inherit file="/base/index.html"/>
+
+<%!
+   from pylons import config
+   fbappid = config.get("facebook.appid")
+%>
+
+<script>
+function lastfm(id)
+{
+
+    $.ajax({
+      type: "POST",
+      url: "/music/songinfo/"+id,
+      data: "",
+      success: function(response)
+                 {
+                    $("#Lastfm").html(response);
+                    var pane = $('.Lastfm')
+ 	            pane.jScrollPane();
+                 }
+    });
+}
+
+function search()
+{
+
+  var runningRequest = false;
+  var request;
+
+  var searchterm = $("#searchinput").val();
+  if (!searchterm)
+  {
+      viewall();
+      return;
+  }
+
+
+  // Abort opened requests to speed it up
+  if(runningRequest){
+    request.abort();
+  }
+
+  $("#searchdone").html("<img src='/ajax-loader.gif' alt='Searching.' />");
+  runningRequest = true;
+  request =  $.ajax({
+      type: "POST",
+      url: "/search/",
+      data: "search="+searchterm,
+      success: function(response)
+                 {
+                      hideall();
+                      var list = response.split(',');
+                      $.each( list, function(index, item){
+                           var id = item;
+                           $("#songid"+id).show();
+                      });
+
+                 },
+      error: function()
+                 {
+                      alert("Something went wrong.");
+                 }
+    });
+  $("#searchdone").html("");
+}
+
+function viewall()
+{
+    $(".songdiv").show();
+}
+
+function hideall()
+{
+    $(".songdiv").hide();
+}
+
+function removesong(id_)
+{
+      $.ajax({
+      type: "POST",
+      url: "/music/removesong/"+id_,
+      data: "",
+      success: function(response)
+                 {
+                      $("#songid"+id_).remove();
+                 },
+      error: function()
+                 {
+                      alert("Something went wrong.");
+                 }
+    });
+}
+
+</script>
+
+
+<div class="content wrapper">
+  <div class="left">
+    <span id="error"></span>
+    <div class="music-list scroll-pane" id="music-list">
+      % for song in c.songs:
+        <div class="songdiv" onclick="lastfm(${song.id})" id="songid${song.id}">
+	  <a class="songlink" href="${c.url}/music/listen/${song.id}.mp3" title="${song.title}" type="audio/mpeg" onclick="lastfm(${song.id})">
+	    % if song.albumart.isspace():
+	      <img src="/albumart.jpg" alt="" class="albumart"/>
+	    % else:
+	      <img src="${song.albumart}" alt="" class="albumart"/>
+	    % endif
+	    ${song.artist} - ${song.title}
+	  </a>
+	  % if c.isadmin:
+	  <span class="remove"><img src="/remove.png" alt="remove" class="removeimg" onclick="$('#confirmremove${song.id}').show();"/>
+	    <span id="confirmremove${song.id}" class="confirmremove">
+	      <span>Confirm: </span>
+	      <span class="confirmopt" onclick="removesong(${song.id});">Y</span>
+	      <span class="confirmopt" onclick="$('#confirmremove${song.id}').hide();">N</span>
+	    </span>
+	  </span>
+	  % endif
+	</div>
+      % endfor
+      
+      <br> 
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="Lastfm scroll-pane">
+      <div id="Lastfm">
+	% try:
+	  % if c.songs[0]:
+	<img src="${c.songs[0].albumart}" class="albumart" alt="" />
+	<span class="songname">
+	  ${c.songs[0].artist} - ${c.songs[0].title}
+	</span>
+	<div class="info">
+	  <%
+	     context.write(c.songs[0].content)
+	  %>
+	</div>
+	  % endif
+	% except Exception:
+	<p>No songs have been uploaded yet.</p>
+	% endtry
+      </div>
+    </div>
+    <div class="friends">
+	<div id="fb-root"></div><script src="http://connect.facebook.net/en_US/all.js#appId=${fbappid}&amp;xfbml=1"></script><fb:facepile href=""></fb:facepile>
+	<script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script><fb:like layout="button_count"></fb:like>
+    </div>
+  </div>
+</div>
+

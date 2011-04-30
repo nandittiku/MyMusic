@@ -1,0 +1,49 @@
+<%inherit file="/base/index.html"/>
+
+<script>
+/* Make request to get LastFM information via Ajax  */
+function lastfm()
+{
+  $("#lastfmdone").html("<img src='/ajax-loader.gif' alt='Getting information. This may take a while.' />");
+    $.ajax({
+      type: "POST",
+      url: "/music/lastfm/",
+      data: "",
+      success: function(response){  $("#lastfmdone").html("<img src='/check.gif' alt='Done' />");}
+    });
+}
+
+/* Make request to clear the music database via Ajax  */
+function cleardb()
+{
+  $("#cleardbdone").html("<img src='/ajax-loader.gif' alt='Getting information. This may take a while.' />");
+    $.ajax({
+      type: "POST",
+      url: "/music/clearDB/",
+      data: "",
+      success: function(response){  $("#cleardbdone").html("<img src='/check.gif' alt='Done' />");}
+    });
+}
+</script>
+
+<div class="content wrapper">
+  <div style="padding:10px">
+    <p class="message">${c.message}</p>
+    <form name="test" method="post" action="/music/addmusic/">
+      <h4>Music Folder: </h4><input type="text" name="folder" />
+      <input type="submit" name="submit" value="Submit" class="button"/>
+    </form>
+  </div>
+
+  <div style="padding:10px">
+    <h4>Get LastFM Data: </h4><input id="lastfm" type="button" onclick="lastfm()" value="Get LastFM Info" class="button"/>
+    <span id="lastfmdone"></span>
+  </div>
+
+  <div style="padding:10px">
+    <h4>Remove all songs: </h4> <input id="cleardb" type="button" onclick="cleardb()" value="Clear DB" class="button"/>
+    <span id="cleardbdone"></span>
+  </div>
+
+</div>
+

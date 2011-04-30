@@ -1,0 +1,335 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>mymusic.lib.music &mdash; MyMusic v1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="MyMusic v1.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">MyMusic v1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for mymusic.lib.music</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Used mainly by the Music Controller to access the Music DB,</span>
+<span class="sd">get and store information about the  music.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">mymusic.model.music</span> <span class="kn">as</span> <span class="nn">model</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">orm</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">create_engine</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.sql</span> <span class="kn">import</span> <span class="n">select</span><span class="p">,</span> <span class="n">delete</span><span class="p">,</span> <span class="n">update</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.sql</span> <span class="kn">import</span> <span class="n">and_</span><span class="p">,</span> <span class="n">or_</span><span class="p">,</span> <span class="n">not_</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">UserDict</span> <span class="kn">import</span> <span class="n">UserDict</span>
+
+<span class="c"># Create an engine and create all the tables we need</span>
+<span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s">&quot;sqlite:///musicDB.db&quot;</span><span class="p">)</span>
+<span class="n">connection</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">bind</span> <span class="o">=</span> <span class="n">engine</span>
+<span class="n">model</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
+<span class="c"># Set up the session</span>
+<span class="n">sm</span> <span class="o">=</span> <span class="n">orm</span><span class="o">.</span><span class="n">sessionmaker</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="n">engine</span><span class="p">,</span> <span class="n">autoflush</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">autocommit</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                      <span class="n">expire_on_commit</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">orm</span><span class="o">.</span><span class="n">scoped_session</span><span class="p">(</span><span class="n">sm</span><span class="p">)</span>
+
+
+
+<div class="viewcode-block" id="stripnulls"><a class="viewcode-back" href="../../../libs.html#mymusic.lib.music.stripnulls">[docs]</a><span class="k">def</span> <span class="nf">stripnulls</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Source: http://diveintopython.org/object_oriented_framework/index.html</span>
+<span class="sd">    strip whitespace and nulls</span>
+<span class="sd">    @param data - data to strip nulls from</span>
+<span class="sd">    @return data after remove nulls</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\00</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="FileInfo"><a class="viewcode-back" href="../../../libs.html#mymusic.lib.music.FileInfo">[docs]</a><span class="k">class</span> <span class="nc">FileInfo</span><span class="p">(</span><span class="n">UserDict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Source: http://diveintopython.org/object_oriented_framework/index.html</span>
+<span class="sd">    store file metadata</span>
+<span class="sd">    @param UserDict - To store info in</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">UserDict</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename</span>
+</div>
+<div class="viewcode-block" id="MP3FileInfo"><a class="viewcode-back" href="../../../libs.html#mymusic.lib.music.MP3FileInfo">[docs]</a><span class="k">class</span> <span class="nc">MP3FileInfo</span><span class="p">(</span><span class="n">FileInfo</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Source: http://diveintopython.org/object_oriented_framework/index.html</span>
+<span class="sd">    store ID3v1.0 MP3 tags</span>
+<span class="sd">    @param FileInfo</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tagDataMap</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;title&quot;</span>   <span class="p">:</span> <span class="p">(</span>  <span class="mi">3</span><span class="p">,</span>  <span class="mi">33</span><span class="p">,</span> <span class="n">stripnulls</span><span class="p">),</span>
+                  <span class="s">&quot;artist&quot;</span>  <span class="p">:</span> <span class="p">(</span> <span class="mi">33</span><span class="p">,</span>  <span class="mi">63</span><span class="p">,</span> <span class="n">stripnulls</span><span class="p">),</span>
+                  <span class="s">&quot;album&quot;</span>   <span class="p">:</span> <span class="p">(</span> <span class="mi">63</span><span class="p">,</span>  <span class="mi">93</span><span class="p">,</span> <span class="n">stripnulls</span><span class="p">),</span>
+                  <span class="s">&quot;year&quot;</span>    <span class="p">:</span> <span class="p">(</span> <span class="mi">93</span><span class="p">,</span>  <span class="mi">97</span><span class="p">,</span> <span class="n">stripnulls</span><span class="p">),</span>
+                  <span class="s">&quot;comment&quot;</span> <span class="p">:</span> <span class="p">(</span> <span class="mi">97</span><span class="p">,</span> <span class="mi">126</span><span class="p">,</span> <span class="n">stripnulls</span><span class="p">),</span>
+                  <span class="s">&quot;genre&quot;</span>   <span class="p">:</span> <span class="p">(</span><span class="mi">127</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="nb">ord</span><span class="p">)}</span>
+
+    <span class="k">def</span> <span class="nf">__parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        parse ID3v1.0 tags from MP3 file</span>
+<span class="sd">        @param filename - Song to get ID3 tags of.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>                               
+            <span class="n">fsock</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&quot;rb&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>                           
+                <span class="n">fsock</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="o">-</span><span class="mi">128</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>        
+                <span class="n">tagdata</span> <span class="o">=</span> <span class="n">fsock</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>  
+            <span class="k">finally</span><span class="p">:</span>                       
+                <span class="n">fsock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>              
+            <span class="k">if</span> <span class="n">tagdata</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;TAG&quot;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">parseFunc</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tagDataMap</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">parseFunc</span><span class="p">(</span><span class="n">tagdata</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">])</span>               
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>                    
+            <span class="k">pass</span>                           
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the item info</span>
+<span class="sd">        @param key - The key</span>
+<span class="sd">        @param item - The attribute</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s">&quot;name&quot;</span> <span class="ow">and</span> <span class="n">item</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__parse</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="n">FileInfo</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="listDirectory"><a class="viewcode-back" href="../../../libs.html#mymusic.lib.music.listDirectory">[docs]</a><span class="k">def</span> <span class="nf">listDirectory</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a folder, find all songs recursively and return a list of songs with ID3tag info.</span>
+<span class="sd">    This is used to add music to the library</span>
+<span class="sd">    @param folder - Folder containing music</span>
+<span class="sd">    @return songs - list of songs and ID3 tag info in directory</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">fnmatch</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+
+    <span class="n">rootPath</span> <span class="o">=</span> <span class="n">directory</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="s">&#39;*.mp3&#39;</span>
+
+    <span class="c">## find all songs in directory</span>
+    <span class="n">fileList</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">rootPath</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
+            <span class="k">print</span> <span class="n">filename</span>
+            <span class="n">fileList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
+
+    <span class="c">## get song info (ID3 tag)</span>
+    <span class="c">## Source: http://diveintopython.org/object_oriented_framework/index.html</span>
+    <span class="k">def</span> <span class="nf">getFileInfoClass</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">FileInfo</span><span class="o">.</span><span class="n">__module__</span><span class="p">]):</span>      
+        <span class="s">&quot;get file info class from filename extension&quot;</span>                             
+        <span class="n">subclass</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">FileInfo&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]</span>       
+        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">subclass</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">subclass</span><span class="p">)</span> <span class="ow">or</span> <span class="n">FileInfo</span>
+
+    
+    <span class="k">return</span> <span class="p">[</span><span class="n">getFileInfoClass</span><span class="p">(</span><span class="n">f</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fileList</span><span class="p">]</span>                  
+
+</div>
+<div class="viewcode-block" id="findsongs"><a class="viewcode-back" href="../../../libs.html#mymusic.lib.music.findsongs">[docs]</a><span class="k">def</span> <span class="nf">findsongs</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a folder, find all songs recursively and return a list of songs with ID3tag info.</span>
+<span class="sd">    This is used to add music to the library</span>
+<span class="sd">    @param folder - Folder containing music</span>
+<span class="sd">    @return songs - list of songs and ID3 tag info in directory</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">songs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">listDirectory</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
+        <span class="n">songs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">songs</span>
+
+</div>
+<div class="viewcode-block" id="add"><a class="viewcode-back" href="../../../libs.html#mymusic.lib.music.add">[docs]</a><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The API function call to be used to add music to the</span>
+<span class="sd">    library and DB given the path to the folder.</span>
+<span class="sd">    @param folder - Folder contaiing the music on the webserver machine.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">songs</span> <span class="o">=</span> <span class="n">findsongs</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">song</span> <span class="ow">in</span> <span class="n">songs</span><span class="p">:</span>
+        <span class="n">addsong</span><span class="p">(</span><span class="n">song</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="addsong"><a class="viewcode-back" href="../../../libs.html#mymusic.lib.music.addsong">[docs]</a><span class="k">def</span> <span class="nf">addsong</span><span class="p">(</span><span class="n">song</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add a song to the database</span>
+<span class="sd">    @param song - The song to add to the database</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">music</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">Music</span><span class="p">()</span>
+    <span class="k">if</span> <span class="s">&quot;title&quot;</span> <span class="ow">in</span> <span class="n">song</span><span class="p">:</span>
+        <span class="n">music</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">song</span><span class="p">[</span><span class="s">&quot;title&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s">&quot;artist&quot;</span> <span class="ow">in</span> <span class="n">song</span><span class="p">:</span>
+        <span class="n">music</span><span class="o">.</span><span class="n">artist</span> <span class="o">=</span> <span class="n">song</span><span class="p">[</span><span class="s">&quot;artist&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="n">music</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">song</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">music</span><span class="p">)</span>
+    <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">music</span>
+    
+        
+</div>
+<div class="viewcode-block" id="findall"><a class="viewcode-back" href="../../../libs.html#mymusic.lib.music.findall">[docs]</a><span class="k">def</span> <span class="nf">findall</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper around the SQL calls to find all the music</span>
+<span class="sd">    in the library.</span>
+<span class="sd">    @return songs - List of songs and all their corresponding information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">songslist</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">Music</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">songslist</span>
+
+</div>
+<div class="viewcode-block" id="findwhere"><a class="viewcode-back" href="../../../libs.html#mymusic.lib.music.findwhere">[docs]</a><span class="k">def</span> <span class="nf">findwhere</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for songs which match the query.</span>
+<span class="sd">    @param query - The song to search for</span>
+<span class="sd">    @return songs - List of songs that match the query</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># query = query.split()</span>
+    <span class="c"># sql = &quot;select * from music Where &quot;</span>
+    <span class="c"># for q in query:</span>
+    <span class="c">#     sql += &quot;title LIKE &#39;%&quot;+q+&quot;%&#39; OR artist LIKE  &#39;%&quot;+q+&quot;%&#39; OR &quot;</span>
+
+    <span class="c"># sql = sql[:-3]</span>
+    <span class="n">sql</span> <span class="o">=</span> <span class="s">&quot;select * from music where title LIKE &#39;%&quot;</span><span class="o">+</span><span class="n">query</span><span class="o">+</span><span class="s">&quot;%&#39; OR artist LIKE &#39;%&quot;</span><span class="o">+</span><span class="n">query</span><span class="o">+</span><span class="s">&quot;%&#39;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+</div>
+<div class="viewcode-block" id="findstringwhere"><a class="viewcode-back" href="../../../libs.html#mymusic.lib.music.findstringwhere">[docs]</a><span class="k">def</span> <span class="nf">findstringwhere</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for songs which match the query.</span>
+<span class="sd">    @param query - The song to search for</span>
+<span class="sd">    @return songs - List of songs that match the query</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">findwhere</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+    <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+        <span class="nb">list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s">&quot;id&quot;</span><span class="p">])</span><span class="o">+</span><span class="s">&quot;,&quot;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nb">list</span>
+
+    </div>
+<div class="viewcode-block" id="findsong"><a class="viewcode-back" href="../../../libs.html#mymusic.lib.music.findsong">[docs]</a><span class="k">def</span> <span class="nf">findsong</span><span class="p">(</span><span class="n">songID</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper around the SQL calls to find a particular song</span>
+<span class="sd">    by ID present in the library.</span>
+<span class="sd">    @param songID - ID of the song to search for</span>
+<span class="sd">    @return song - associative array with information about the song</span>
+<span class="sd">    returns None on failure</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">song</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">Music</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">songID</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">song</span>
+</div>
+<span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="n">song</span><span class="p">,</span> <span class="n">newsong</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="c"># if &quot;artist&quot; in newsong:</span>
+    <span class="c">#     song.artist = newsong[&quot;artist&quot;]</span>
+    <span class="c"># if &quot;title&quot; in newsong:</span>
+    <span class="c">#     song.title = newsong[&quot;track&quot;]</span>
+    <span class="k">if</span> <span class="s">&quot;albumart&quot;</span> <span class="ow">in</span> <span class="n">newsong</span><span class="p">:</span>
+        <span class="n">song</span><span class="o">.</span><span class="n">albumart</span> <span class="o">=</span> <span class="n">newsong</span><span class="p">[</span><span class="s">&quot;albumart&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s">&quot;summary&quot;</span> <span class="ow">in</span> <span class="n">newsong</span><span class="p">:</span>
+        <span class="n">song</span><span class="o">.</span><span class="n">summary</span> <span class="o">=</span> <span class="n">newsong</span><span class="p">[</span><span class="s">&quot;summary&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s">&quot;content&quot;</span> <span class="ow">in</span> <span class="n">newsong</span><span class="p">:</span>
+        <span class="n">song</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">newsong</span><span class="p">[</span><span class="s">&quot;content&quot;</span><span class="p">]</span>
+        
+    <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">song</span><span class="p">)</span>
+    <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    
+<div class="viewcode-block" id="remove"><a class="viewcode-back" href="../../../libs.html#mymusic.lib.music.remove">[docs]</a><span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="n">songID</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper around the SQL call to remove a song entry</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">Music</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">songID</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+    
+    </div>
+<div class="viewcode-block" id="clear"><a class="viewcode-back" href="../../../libs.html#mymusic.lib.music.clear">[docs]</a><span class="k">def</span> <span class="nf">clear</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper around the SQL call to clear the DB entry for</span>
+<span class="sd">    music so the library can be clean for new input or a fresh start.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">Music</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">MyMusic v1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Nandit Tiku.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
+    </div>
+  </body>
+</html>
